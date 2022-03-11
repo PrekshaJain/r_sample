@@ -14,8 +14,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Dataset Description
 ```{r}
-From 2009 to 2016, a cluster randomized controlled trial was implemented by several researchers to study the impact of local banks’ expansion on households’ loans, savings, and insurance talking behavior. The research project sought to evaluate the impact of the intervention on a wide range of outcomes that reflect household well-being (e.g. household income, consumption), as well as individual well-being (e.g. women’s empowerment, health). The research implementation partner was a large financial institution in rural South India that randomly expanded bank infrastructure across rural villages (called service areas) in 3 districts of Tamil Nadu, India. In 2009, 101 service areas over three districts were identified, which formed 50 service area pairs. One service area “pair” is a triplet, containing one treatment area and two control area. 50 treatment areas and 
-51 control areas given a total of 101 service areas. A bank branch was assigned to each service area, and the bank opened branches in the treatment group service area at the time of assignment, while expansion into the control group areas after 18 -24 months later. More than 4,000 households were randomly selected across all service areas to be included in the study. The opening of bank branches happened in three rounds. Thus, there are three baseline surveys, and three endline surveys.
+From 2009 to 2016, a cluster randomized controlled trial was implemented by several researchers to study the impact of local banks’ 
+expansion on households’ loans, savings, and insurance talking behavior. The research project sought to evaluate the impact of the 
+intervention on a wide range of outcomes that reflect household well-being (e.g. household income, consumption), as well as individual 
+well-being (e.g. women’s empowerment, health). The research implementation partner was a large financial institution in rural South India 
+that randomly expanded bank infrastructure across rural villages (called service areas) in 3 districts of Tamil Nadu, India. In 2009, 101
+service areas over three districts were identified, which formed 50 service area pairs. One service area “pair” is a triplet, containing 
+one treatment area and two control area. 50 treatment areas and 51 control areas given a total of 101 service areas. A bank branch was 
+assigned to each service area, and the bank opened branches in the treatment group service area at the time of assignment, while expansion
+into the control group areas after 18 -24 months later. More than 4,000 households were randomly selected across all service areas to be 
+included in the study. The opening of bank branches happened in three rounds. Thus, there are three baseline surveys, and three endline surveys.
 ```
 
 
@@ -50,7 +58,8 @@ dim(endline)
 summary(endline)
 ```
 ```{r}
-# Inferences about the financial status of households - checking if the mean/median income for HHs which borrow more formally differs from those those borrow more informally 
+# Inferences about the financial status of households - checking if the mean/median income for HHs which borrow more formally 
+# differs from those those borrow more informally 
 summary(endline$new_hhinc[endline$new_totformbor_24 > endline$newtotinformbor_24])
 summary(endline$new_hhinc[endline$new_totformbor_24 < endline$newtotinformbor_24])
 
@@ -60,7 +69,11 @@ summary(endline$newtotinformbor_24[endline$new_totformbor_24 < endline$newtotinf
 summary(endline$newtotinformbor_24[endline$new_totformbor_24 > endline$newtotinformbor_24])
 summary(endline$new_totformbor_24[endline$new_totformbor_24 < endline$newtotinformbor_24])
 
-# It seems preliminarily that there is indeed a difference between the mean income of households which borrow more formally vs. informally, i.e. richer households can afford/have access to formal sources of lending as compared to poorer households which have to rely on more informal sources of lending. It also seems like the ticket size for formal vs. informal borrowing is higher for those who borrow dominantly from the respective sources, however, not so much if we look at non-dominant sources. These preliminary inferences can be made more concrete through a t-test.
+# It seems preliminarily that there is indeed a difference between the mean income of households which borrow more formally vs. 
+# informally, i.e. richer households can afford/have access to formal sources of lending as compared to poorer households which 
+# have to rely on more informal sources of lending. It also seems like the ticket size for formal vs. informal borrowing is higher
+# for those who borrow dominantly from the respective sources, however, not so much if we look at non-dominant sources. 
+# These preliminary inferences can be made more concrete through a t-test.
 
 ```
 ```{r}
@@ -77,8 +90,10 @@ endline$new_totformbor_24 <- outlierReplace(endline$new_totformbor_24)
 endline$newtotinformbor_24 <- outlierReplace(endline$newtotinformbor_24)
 
 # It is not possible to label variables in R so I have just replaced them
-# It is important to top-code income and debt variables since we don't want outliers in the data to drive the treatment effects and also reduce the precision of our estimates - it is to make the model more robust.
-# Other checks could be to test for "good variation" in our data, and retain only those variables that satisfy a given criterion. Another could be to check for missing values and how to handle them.
+# It is important to top-code income and debt variables since we don't want outliers in the data to drive the treatment effects 
+# and also reduce the precision of our estimates - it is to make the model more robust.
+# Other checks could be to test for "good variation" in our data, and retain only those variables that satisfy a given criterion.
+# Another could be to check for missing values and how to handle them.
 ```
 
 ```{r}
@@ -114,13 +129,22 @@ dim(endline_merged)
 ```
 
 ```{r}
-# Creating a dummy variable for HHs with per capita daily income below the poverty line of Rs. 26.995 (2010 PPP conversion of USD 1.90). This dummy takes the value 1 if below poverty line, 0 if not. As mentioned earlier, it is not possible to label variables in R.
+# Creating a dummy variable for HHs with per capita daily income below the poverty line of Rs. 26.995 
+# (2010 PPP conversion of USD 1.90). This dummy takes the value 1 if below poverty line, 0 if not. 
 endline_merged$bpl <- as.factor(ifelse(endline_merged$new_hhinc/endline_merged$hhnomembers/30 < 26.995, 1, 0))
 
 # There are 4 missing values reported for HHs which refused to answer the question on household income
 endline_merged[is.na(endline_merged$bpl),]
 
-# The strength of this dummy is that it helps identify poorest of the poor households using a global standard of a poverty line, which is comparable across countries. However, the negative is that income might be misreported and the distribution of income within the household might be unequal, as is the case in many developing countries where income of males is often higher than females and children. If I could ask addditional questions, I would ask questions about the household consumption and also individual consumption if possible because a) the reporting is likely to be more accurate b) individual level effects would become more pronounced. I would also ask about the seasonality of income because the staggered nature of income might cause acute poverty in certain months, inducing borrowing, which is measured over a longer period, causing disparity in comparison.
+# The strength of this dummy is that it helps identify poorest of the poor households using a global standard of a 
+# poverty line, which is comparable across countries. However, the negative is that income might be misreported and the 
+# distribution of income within the household might be unequal, as is the case in many developing countries where income 
+# of males is often higher than females and children. If I could ask addditional questions, I would ask questions about 
+the household consumption and also individual consumption if possible because:
+# a) the reporting is likely to be more accurate 
+# b) individual level effects would become more pronounced. I would also ask about the seasonality of income because the
+staggered nature of income might cause acute poverty in certain months, inducing borrowing, which is measured over a longer 
+period, causing disparity in comparison.
 ```
 
 ```{r}
@@ -156,10 +180,12 @@ endline_merged_2 <- data.frame(hhid = endline_merged$hhid[w])
 dim(endline_merged_2)
 head(endline_merged_2)
 
-# Now, merging the new dataset with baseline, retaining both, common households and those which were present only in baseline, adding both rows and columns
+# Now, merging the new dataset with baseline, retaining both, common households and those which were present only in baseline, adding 
+# both rows and columns
 endline_merged_2 <- merge(endline_merged_2, baseline[, names(baseline)], all = T)
 
-# Checking dimensions of dataset - now we have 4,066 households, indicating an addition of 264 households that were present in baseline but not endline
+# Checking dimensions of dataset - now we have 4,066 households, indicating an addition of 264 households that were present in baseline 
+# but not endline
 dim(endline_merged_2)
 ```
 
@@ -181,7 +207,8 @@ eb_combined[eb_combined$group_id.x != eb_combined$group_id.y,]
 
 table(baseline$group_id)
 
-# It is clear that there is a coding error in one of the surveys. Assuming that the baseline categorization was correct, replacing the mis-categorization in endline with baseline values.
+# It is clear that there is a coding error in one of the surveys. Assuming that the baseline categorization was correct, replacing 
+# the mis-categorization in endline with baseline values.
 
 endline_merged[endline_merged$hhid == 106131, 1] <- 152
 endline_merged[endline_merged$hhid == 106360, 1] <- 152
@@ -189,7 +216,9 @@ endline_merged[endline_merged$hhid == 106360, 1] <- 152
 # Now, creating the final merged dataset with endline-only, baseline-only, and common households
 eb_combined <- merge(endline_merged_2, endline_merged, by = c("hhid", "group_id", "hhnomembers"), all = T)
 
-# Checking row dimensions: sense-check the answer, which should be 4,066 + 4,160 - 3802 = 4,424. # Checking if all columns have been included. Again, sense-check: answer should be 14 + 17 - 3 = 28. The answer is verified. Therefore, the data merging process should have worked fine.
+# Checking row dimensions: sense-check the answer, which should be 4,066 + 4,160 - 3802 = 4,424. # Checking if all columns have 
+# been included. Again, sense-check: answer should be 14 + 17 - 3 = 28. The answer is verified. Therefore, the data merging process 
+# should have worked fine.
 dim(eb_combined)
 
 # Checking the data structure and vital signs.
@@ -199,23 +228,33 @@ str(eb_combined)
 ```
 
 ```{r}
-# To deal with baseline-only and endline-only households, we create a dummy to identify which is which. This dummy takes on the value 0 if common between baseline and endline, 1 if baseline-only, and 2 if endline-only. 
+# To deal with baseline-only and endline-only households, we create a dummy to identify which is which. This dummy takes on the value 
+# 0 if common between baseline and endline, 1 if baseline-only, and 2 if endline-only. 
 eb_combined$missing_status <- ifelse(eb_combined$hhid %in% common_end_base, 0, ifelse(eb_combined$hhid %in% baseline$hhid, 1, 2))
 
 # Checking how many values we end up with for each dummy - the answer ties in with the answers we have got previously so the process works.
 table(eb_combined$missing_status)
 
-# I have added dummy variables instead of dropping observations because it is important to not mess up the balance between the treatment and control groups. Dummies allow one to analyze the difference, if any, between the characteristics of the three categories of households, i.e. common, endline-only, baseline-only.
+# I have added dummy variables instead of dropping observations because it is important to not mess up the balance between the treatment 
+# and control groups. Dummies allow one to analyze the difference, if any, between the characteristics of the three categories of households,
+# i.e. common, endline-only, baseline-only.
 ```
 
 ## Data Analysis
 
 ```{r}
-# The testable hypotheses could be whether a) access to formal credit reduces informal lending and increases formal lending (expect formal borrowing to increase and informal borrowing to decrease) b) access to more/better credit terms increases household income (expect hh income to increase) c) savings respond to better credit terms (expect savings to increase)
+# The testable hypotheses could be whether 
+# a) access to formal credit reduces informal lending and increases formal lending (expect formal borrowing to increase and informal borrowing
+# to decrease) 
+# b) access to more/better credit terms increases household income (expect hh income to increase) 
+# c) savings respond to better credit terms (expect savings to increase)
 ```
 
 ```{r}
-# Choosing the following variables to test because they are expected to have an impact on key outcome variables and hence we want to make sure that the groups are 'balanced', i.e. they are not statistically significantly different from each other. This can be seen by the p-values of the following t-tests, all of which are >0.05, so we fail to reject that the two groups are significantly different from each other. This means our randomization is valid and so is our experiment and its conclusions.
+# Choosing the following variables to test because they are expected to have an impact on key outcome variables and hence we want to make 
+# sure that the groups are 'balanced', i.e. they are not statistically significantly different from each other. This can be seen by the p-values
+# of the following t-tests, all of which are >0.05, so we fail to reject that the two groups are significantly different from each other.
+# This means our randomization is valid and so is our experiment and its conclusions.
 
 # Demographics
 t1 <- t.test(as.numeric(eb_combined$hhid) ~ eb_combined$treated)
@@ -250,14 +289,20 @@ summary(hh_inc_on_treatment)
 plm_model <- plm(new_hhinc ~ treated, data = eb_combined[!is.na(eb_combined$new_hhinc),], index = c("pair_id"), model = "within")
 summary(plm_model)
 
-# It is appropriate to use a fixed effects specification here because we want to control for time-invariant characteristics at the pair level and isolate the effects of the treatment. In this case, at a pair level, except for one pair, the pair fixed effects are statistically significant at 0.1% level. This provides validity to our fixed effects specification, suggesting that pair-level characteristics do explain the variation in HH income. 
+# It is appropriate to use a fixed effects specification here because we want to control for time-invariant characteristics at the 
+# pair level and isolate the effects of the treatment. In this case, at a pair level, except for one pair, the pair fixed effects 
+# are statistically significant at 0.1% level. This provides validity to our fixed effects specification, suggesting that pair-level 
+# characteristics do explain the variation in HH income. 
 
-# The point estimate is the difference between means of the treatment and control groups as given by the plm_model, which shows that the difference in HH income between treatment and control groups is Rs. 715 and is not statistically different from zero, i.e. we fail to reject that the treatment caused a significant increase in HH income for the treated HHs.
+# The point estimate is the difference between means of the treatment and control groups as given by the plm_model, which shows that 
+# the difference in HH income between treatment and control groups is Rs. 715 and is not statistically different from zero,
+# i.e. we fail to reject that the treatment caused a significant increase in HH income for the treated HHs.
 
 # Testing coefficient after clustering standard errors at the group level -> corrected standard errors
 coef_test(plm_model, vcov = "CR2", cluster = eb_combined$group_id, test = "Satterthwaite")
 
-# It is reasonable for us to cluster standard errors at the group_id level because it represents a certain area for service delivery and we expect errors to be correlated within those areas. Even after correcting for standard errors, the treatment effect is not statistically significant.
+# It is reasonable for us to cluster standard errors at the group_id level because it represents a certain area for service delivery
+# and we expect errors to be correlated within those areas. Even after correcting for standard errors, the treatment effect is not statistically significant.
 ```
 ```{r}
 #Redefining a log(hhinc) variable
@@ -274,7 +319,9 @@ log_hh_inc_on_treatment <- plm(new_log_hhinc ~ treated, data = new_data, index =
 
 summary(log_hh_inc_on_treatment)
 
-# Running a log specification leads our coeeficient, that is treatment effect to be significant at 10% level. It brings down the standard error comparitively and at 10% level, we can reject that there was no increase in HH income due to the treatment. Since we have a smaller set of observations here, we are compromising a bit on the power of our test.
+# Running a log specification leads our coeeficient, that is treatment effect to be significant at 10% level. It brings down the 
+# standard error comparitively and at 10% level, we can reject that there was no increase in HH income due to the treatment. 
+# Since we have a smaller set of observations here, we are compromising a bit on the power of our test.
 ```
 
 ```{r}
@@ -283,7 +330,10 @@ log_hh_inc_on_treatment_controls <- plm(new_log_hhinc ~ treated + age_hoh + gend
 
 summary(log_hh_inc_on_treatment_controls)
 
-# I chose these controls because they are intuitively likely to explain variation in hh income; the fact that almost all are significant shows that the treatment effect could have been biased earlier, due to the omitted variables bias, since we failed to account for key factors that are correlated with both the treatment and the hh income. After including hh level controls, we find that our treatment effects becomes significant at 5% level as the magnitude of our estimate increases.
+# I chose these controls because they are intuitively likely to explain variation in hh income; the fact that almost all are significant
+# shows that the treatment effect could have been biased earlier, due to the omitted variables bias, since we failed to account for key 
+# factors that are correlated with both the treatment and the hh income. After including hh level controls, we find that our treatment 
+# effects becomes significant at 5% level as the magnitude of our estimate increases.
 ```
 
 ```{r, eval=FALSE}
