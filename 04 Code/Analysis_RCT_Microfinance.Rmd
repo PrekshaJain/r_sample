@@ -309,7 +309,7 @@ eb_combined$new_log_hhinc <- log(eb_combined$new_hhinc)
 # Defining new data for which log(hhinc) is not NA or -Inf
 new_data <- eb_combined[!is.na(eb_combined$new_log_hhinc) & eb_combined$new_log_hhinc > 0,]
 
-#Checking dimensions of the new data
+# Checking dimensions of the new data
 dim(new_data)
 
 # Running a log specification with pair fixed effects :
