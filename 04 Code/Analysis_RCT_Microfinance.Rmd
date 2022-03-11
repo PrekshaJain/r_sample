@@ -13,7 +13,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Dataset Description
-```{r}
 From 2009 to 2016, a cluster randomized controlled trial was implemented by several researchers to study the impact of local banks’ 
 expansion on households’ loans, savings, and insurance talking behavior. The research project sought to evaluate the impact of the 
 intervention on a wide range of outcomes that reflect household well-being (e.g. household income, consumption), as well as individual 
@@ -24,7 +23,6 @@ one treatment area and two control area. 50 treatment areas and 51 control areas
 assigned to each service area, and the bank opened branches in the treatment group service area at the time of assignment, while expansion
 into the control group areas after 18 -24 months later. More than 4,000 households were randomly selected across all service areas to be 
 included in the study. The opening of bank branches happened in three rounds. Thus, there are three baseline surveys, and three endline surveys.
-```
 
 
 
@@ -326,7 +324,9 @@ summary(log_hh_inc_on_treatment)
 
 ```{r}
 # Re-running the previous specification with household-level controls (age, gender, education, caste, religion, members over 18 years of age)
-log_hh_inc_on_treatment_controls <- plm(new_log_hhinc ~ treated + age_hoh + gender_hoh + educyears_hoh + hhcaste_sc_st + hhcaste_fc + hhreg_muslim + hhnomembers_above18 + hhnomembers, data = new_data, index = "pair_id", model = "within")
+log_hh_inc_on_treatment_controls <- plm(new_log_hhinc ~ treated + age_hoh + gender_hoh + educyears_hoh + hhcaste_sc_st + hhcaste_fc 
+                                      + hhreg_muslim + hhnomembers_above18 + hhnomembers, 
+                                      data = new_data, index = "pair_id", model = "within")
 
 summary(log_hh_inc_on_treatment_controls)
 
@@ -341,21 +341,38 @@ summary(log_hh_inc_on_treatment_controls)
 
 library("stargazer")
 
-stargazer(log_hh_inc_on_treatment_controls, title = "Regression Results with Household Level Controls", dep.var.labels = c("Log of Household Income over last 30 days"), covariate.labels = c("Treatment", "Age (Head of Household)", "Gender (Head of Household)", "Years of Education (Head of Household)", "Caste - SC/ST", "Caste - Forward", "Religion - Muslim", "No. of Household members over age of 18", "No. of Household members"))
+stargazer(log_hh_inc_on_treatment_controls, 
+          title = "Regression Results with Household Level Controls", 
+          dep.var.labels = c("Log of Household Income over last 30 days"), 
+          covariate.labels = c("Treatment",
+                            "Age (Head of Household)", 
+                            "Gender (Head of Household)",
+                            "Years of Education (Head of Household)",
+                            "Caste - SC/ST", "Caste - Forward",
+                            "Religion - Muslim",
+                            "No. of Household members over age of 18",
+                            "No. of Household members"))
 ```
 
 ```{r}
 #Defining income quartiles
 quantile(eb_combined$new_hhinc, c(0.25, 0.5, 0.75, 1), na.rm = T)
 
-eb_combined$new_hhinc_quartile <- ifelse(eb_combined$new_hhinc < 2850, "I", ifelse(eb_combined$new_hhinc < 6000, "II", ifelse(eb_combined$new_hhinc < 11000, "III", ifelse(eb_combined$new_hhinc <= 214190.3, "IV", NA))))
+eb_combined$new_hhinc_quartile <- ifelse(eb_combined$new_hhinc < 2850, "I", 
+                                  ifelse(eb_combined$new_hhinc < 6000, "II", 
+                                  ifelse(eb_combined$new_hhinc < 11000, "III", 
+                                  ifelse(eb_combined$new_hhinc <= 214190.3, "IV", NA))))
 
 # Creating a data frame to plot the barchart
-avg_borr_inc <- aggregate(eb_combined$new_totbor_24, by = list(eb_combined$treated, eb_combined$new_hhinc_quartile), FUN = mean)
+avg_borr_inc <- aggregate(eb_combined$new_totbor_24, 
+                by = list(eb_combined$treated, eb_combined$new_hhinc_quartile), FUN = mean)
 avg_borr_inc <- data.frame(Treatment = avg_borr_inc[[1]], IncomeQuartile = avg_borr_inc[[2]], AvgBorrowing = avg_borr_inc[[3]])
 
 # Plotting barchart
 library("ggplot2")
 
-ggplot(avg_borr_inc, aes(IncomeQuartile, AvgBorrowing)) + geom_bar(aes(fill = Treatment), stat = "identity", position = "dodge") + labs(x = "Income quartiles", y = "Avg. borrowing in the last 24 months (Rupees)", title = "Avg. borrowed amount for each income quartile, by treatment group")
+ggplot(avg_borr_inc, aes(IncomeQuartile, AvgBorrowing)) 
++ geom_bar(aes(fill = Treatment), stat = "identity", position = "dodge") 
++ labs(x = "Income quartiles", y = "Avg. borrowing in the last 24 months (Rupees)", 
+  title = "Avg. borrowed amount for each income quartile, by treatment group")
 ```
