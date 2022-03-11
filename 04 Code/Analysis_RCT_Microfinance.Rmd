@@ -1,7 +1,7 @@
 ---
 title: "Data Analysis from a Microfinance RCT in India"
 author: "Preksha Jain"
-date: "3/8/2020"
+date: "3/11/2022"
 output:
   word_document: default
   pdf_document: default
@@ -516,7 +516,7 @@ summary(log_hh_inc_on_treatment_controls)
 
 
 ```{r, eval=FALSE}
-#Creating publication quality regression output in LaTeX
+# Creating publication quality regression output in LaTeX
 
 library("stargazer")
 
