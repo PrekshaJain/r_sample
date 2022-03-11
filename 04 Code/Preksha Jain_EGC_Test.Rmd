@@ -1,6 +1,6 @@
 ---
-title: "EGC Data Test"
-author: "Preksha"
+title: "Data Analysis from a Microfinance RCT in India"
+author: "Preksha Jain"
 date: "3/8/2020"
 output:
   word_document: default
@@ -12,17 +12,25 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Dataset Description
+```{r}
+From 2009 to 2016, a cluster randomized controlled trial was implemented by several researchers to study the impact of local banks’ expansion on households’ loans, savings, and insurance talking behavior. The research project sought to evaluate the impact of the intervention on a wide range of outcomes that reflect household well-being (e.g. household income, consumption), as well as individual well-being (e.g. women’s empowerment, health). The research implementation partner was a large financial institution in rural South India that randomly expanded bank infrastructure across rural villages (called service areas) in 3 districts of Tamil Nadu, India. In 2009, 101 service areas over three districts were identified, which formed 50 service area pairs. One service area “pair” is a triplet, containing one treatment area and two control area. 50 treatment areas and 
+51 control areas given a total of 101 service areas. A bank branch was assigned to each service area, and the bank opened branches in the treatment group service area at the time of assignment, while expansion into the control group areas after 18 -24 months later. More than 4,000 households were randomly selected across all service areas to be included in the study. The opening of bank branches happened in three rounds. Thus, there are three baseline surveys, and three endline surveys.
+```
+
+
+
 ## Data Preparation
 
 ```{r}
 library("rio") # loading library to convert .dta file to .csv
 getwd()
-setwd("C:/Users/preks/Documents/Yale/STATATests/EGC_Stata_Test_2020")
-convert("endline.dta", "endline.csv")
+setwd("C:/Users/PJain/Documents/R_Sample")
 ```
 
 ```{r}
 # Reading endline data into R
+convert("endline.dta", "endline.csv")
 endline <- read.csv("endline.csv", header = T)
 
 # Browsing and understanding variables and data structure 
@@ -69,7 +77,7 @@ endline$new_totformbor_24 <- outlierReplace(endline$new_totformbor_24)
 endline$newtotinformbor_24 <- outlierReplace(endline$newtotinformbor_24)
 
 # It is not possible to label variables in R so I have just replaced them
-# It is important to top-code income and debt variabes since we don't want outliers in the data to drive and show treatment effects - it is to make the model more robust.
+# It is important to top-code income and debt variables since we don't want outliers in the data to drive the treatment effects and also reduce the precision of our estimates - it is to make the model more robust.
 # Other checks could be to test for "good variation" in our data, and retain only those variables that satisfy a given criterion. Another could be to check for missing values and how to handle them.
 ```
 
@@ -203,7 +211,7 @@ table(eb_combined$missing_status)
 ## Data Analysis
 
 ```{r}
-# The testable hyotheses could be whether a) access to formal credit reduces informal lending and increases formal lending (expect formal borrowing to increase and informal borrowing to decrease) b) access to more/better credit terms increases household income (expect hh income to increase) c) savings respond to better credit terms (expect savings to increase)
+# The testable hypotheses could be whether a) access to formal credit reduces informal lending and increases formal lending (expect formal borrowing to increase and informal borrowing to decrease) b) access to more/better credit terms increases household income (expect hh income to increase) c) savings respond to better credit terms (expect savings to increase)
 ```
 
 ```{r}
@@ -228,22 +236,12 @@ t10 <- t.test(as.numeric(eb_combined$noclasspassed_hoh) ~ eb_combined$treated)
 t <- list(t1,t2,t3,t4,t5,t6,t7,t8,t9,t10)
 
 t
-# The estimates I got here is the best that I was able to do in making a balance table of t-tests - it's not ideal but given the limited time, I could not think of anything else other than the following method.
-
-# Tried making a loop but not getting too far - sample code:
-#t_tests <- data.frame(rep(rep(NA,10),10))
-#test_vars <- data.frame(eb_combined$hhid, eb_combined$hhcaste_sc_st, eb_combined$hhcaste_fc, eb_combined$new_hhinc, eb_combined$bpl, #eb_combined$gender_hoh, eb_combined$age_hoh, eb_combined$educyears_hoh, eb_combined$readwrite_hoh, eb_combined$noclasspassed_hoh)
-
-#for (i in c(1:10)) {
-#  t_tests[[i]] <- t.test(as.numeric(test_vars[[i]]) ~ eb_combined$treated)
-#}
-
-#t_tests[[1]]
+# The estimates I got here show the balance across groups
 ```
 
 ```{r}
 library("clubSandwich") # helps test for coefficients by clustering standard errors
-library("plm") # helps run  fixed effects linear model
+library("plm") # helps run fixed effects linear model
 
 # Running OLS regressing household income on treatment dummy, with pair fixed effects
 hh_inc_on_treatment <- lm(eb_combined$new_hhinc ~ eb_combined$treated + eb_combined$pair_id - 1)
@@ -311,4 +309,3 @@ library("ggplot2")
 
 ggplot(avg_borr_inc, aes(IncomeQuartile, AvgBorrowing)) + geom_bar(aes(fill = Treatment), stat = "identity", position = "dodge") + labs(x = "Income quartiles", y = "Avg. borrowing in the last 24 months (Rupees)", title = "Avg. borrowed amount for each income quartile, by treatment group")
 ```
-
