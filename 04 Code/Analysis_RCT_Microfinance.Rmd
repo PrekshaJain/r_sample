@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Dataset Description
+
 From 2009 to 2016, a cluster randomized controlled trial was implemented by several researchers to study the impact of local banks’ 
 expansion on households’ loans, savings, and insurance talking behavior. The research project sought to evaluate the impact of the 
 intervention on a wide range of outcomes that reflect household well-being (e.g. household income, consumption), as well as individual 
@@ -21,8 +22,87 @@ that randomly expanded bank infrastructure across rural villages (called service
 service areas over three districts were identified, which formed 50 service area pairs. One service area “pair” is a triplet, containing 
 one treatment area and two control area. 50 treatment areas and 51 control areas given a total of 101 service areas. A bank branch was 
 assigned to each service area, and the bank opened branches in the treatment group service area at the time of assignment, while expansion
-into the control group areas after 18 -24 months later. More than 4,000 households were randomly selected across all service areas to be 
+into the control group areas after 18-24 months later. More than 4,000 households were randomly selected across all service areas to be 
 included in the study. The opening of bank branches happened in three rounds. Thus, there are three baseline surveys, and three endline surveys.
+
+## Codebook
+
+1. treatment_status.csv
+    * pair_id: uniquely identifies a service area control and treatment pair
+    * group_id: uniquely identifies one service area
+    * treated: indicator ==1 denoting a member of the treatment group
+
+2. endline.dta
+    * hhid: unique identifier for each household
+    * totformalborrow_24: total formal borrowed amount (loans) in India Rupees in the past 24 months
+    * totinformalborrow_24: total informal borrowed amount (loans) in India Rupees in the past 24 months
+    * hhinc: self-reported total household income in the last 30 days
+    * survey_round: the round of the survey, either endline 1, 2 or 3.
+    * hhnomembers: Number of household members in each household
+
+3. baseline_controls.dta: This dataset contains baseline household demographics including gender, age, education of head of household, 
+household religions and household caste.
+
+
+
+## Description of Tasks Performed in this File
+
+    ### Data Preparation
+      a. Load the endline data.
+      b. Recode household debt and income variables as numeric values instead of strings, and 
+      replace “None” with 0.
+      c. Browse the variables in this dataset, and describe the financial status of 
+      households in this sample, supported by this data
+      d. Top code household debt and income variables, replacing all values greater than three 
+      standard deviations above the mean with a value that is equal to three standard deviations
+      above the mean.
+      e. Label the new top coded variables.
+      f. Explain why we might want to top code these types of survey 
+      responses from households, and give an example of another data quality or cleaning check 
+      you might want to implement in this type of data.
+      g. Create a total borrowed amount variable that equals the sum of formal and informal 
+      borrowed amounts.
+      h. Merge the endline data with the treatment_status dataset to assign a treatment status for 
+      each household.
+      i. Create a below poverty line dummy using the World Bank poverty line of 1.90 USD 
+      (equivalent to 26.995 rupees in 2010 PPP units) per day per capita. You will need to use the 
+      total household income over the last 30 days to find the daily household income, and then 
+      find the income per capita per day for that household. Label the new variable and note if 
+      there are any missing values.
+      j. Describe the strengths and limitations of using the dummy created to assess a household’s 
+      poverty status. If you were able to collect more data from these households, what types of 
+      additional questions might you ask?
+      k. Merge your working data with the baseline controls dataset, and save the merged data (be 
+      aware of dealing with households that are in baseline only, or endline only. State your 
+      reasoning of handling this issue).
+
+
+    ### Analysis
+      a. In a sentence or two, state a testable hypothesis about the possible effects of this program, 
+      and justify your prior (or prediction) for this particular effect. 
+      b. Choose a few baseline household variables, and perform t-tests or produce a balance table to 
+      test for the significance of differences between the treatment and control groups. 
+          i. Why did you choose these particular variables to test? 
+          ii. What are the results of the test, and what can they tell us about the validity of the 
+              experiment? 
+          iii. Please present the t-test or balance check in a table.
+      c. Regress (with OLS) the household income on the treatment dummy. Include pair fixed 
+      effects, and correct standard errors if necessary. 
+          i. Explain why you think it might be appropriate to use a fixed effects specification in 
+          this case, and how you would interpret the effect of the treatment on household 
+          income in this case. Explain the meaning both of the point estimate and of the 
+          statistical significance
+          ii. Briefly justify your choice of the standard errors
+      d. Generate a log income variable, and re-run the previous specification with log household 
+      income as the dependent variable. 
+          i. What are the key differences between the results of this regression and the results of 
+          the previous specification? 
+      e. Re-run the previous regression including a set of household-level controls.
+          i. Explain why you chose these controls, and if there are key differences in your results 
+          compared to previous specifications.
+          ii. Export and save a regression table suitable for publication from these results
+      f. Create a bar chart suitable for publication that summarizes the average borrowed amount for each 
+      income quartile, by treatment group.
 
 
 
