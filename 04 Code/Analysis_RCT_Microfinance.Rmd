@@ -371,8 +371,8 @@ avg_borr_inc <- data.frame(Treatment = avg_borr_inc[[1]], IncomeQuartile = avg_b
 # Plotting barchart
 library("ggplot2")
 
-ggplot(avg_borr_inc, aes(IncomeQuartile, AvgBorrowing)) 
-+ geom_bar(aes(fill = Treatment), stat = "identity", position = "dodge") 
-+ labs(x = "Income quartiles", y = "Avg. borrowing in the last 24 months (Rupees)", 
-  title = "Avg. borrowed amount for each income quartile, by treatment group")
+ggplot(avg_borr_inc, aes(IncomeQuartile, AvgBorrowing)) + 
+        geom_bar(aes(fill = Treatment), stat = "identity", position = "dodge") + 
+        labs(x = "Income quartiles", y = "Avg. borrowing in the last 24 months (Rupees)", 
+        title = "Avg. borrowed amount for each income quartile, by treatment group")
 ```
