@@ -138,11 +138,11 @@ endline_merged[is.na(endline_merged$bpl),]
 # poverty line, which is comparable across countries. However, the negative is that income might be misreported and the 
 # distribution of income within the household might be unequal, as is the case in many developing countries where income 
 # of males is often higher than females and children. If I could ask addditional questions, I would ask questions about 
-the household consumption and also individual consumption if possible because:
+# the household consumption and also individual consumption if possible because:
 # a) the reporting is likely to be more accurate 
 # b) individual level effects would become more pronounced. I would also ask about the seasonality of income because the
-staggered nature of income might cause acute poverty in certain months, inducing borrowing, which is measured over a longer 
-period, causing disparity in comparison.
+# staggered nature of income might cause acute poverty in certain months, inducing borrowing, which is measured over a longer 
+# period, causing disparity in comparison.
 ```
 
 ```{r}
