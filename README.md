@@ -36,18 +36,18 @@ household religions and household caste.
 ## Analysis Description
 
 1. Data Preparation
-      a. Clean the endline data and generate relevant variables
-      b. Merge the endline data with the treatment_status dataset
-      c. Merge the working data with the baseline controls dataset, and save the merged data.
+   1. Clean the endline data and generate relevant variables
+   2. Merge the endline data with the treatment_status dataset
+   3. Merge the working data with the baseline controls dataset, and save the merged data.
 
 2. Analysis
-      a. Establish a testable hypothesis about the possible effects of this program
-      b. Check balance between the treatment and control groups using baseline household variables
-      c. Regress (with OLS) the household income and log household income on the treatment dummy, including 
-      pair fixed effects, and standard errors clustered at the appropriate level 
-      e. Re-run the previous regression including a set of household-level controls and export and save a regression table 
-      suitable for publication from these results
-      f. Create a bar chart suitable for publication that summarizes the average borrowed amount for each income quartile,
+   1. Establish a testable hypothesis about the possible effects of this program
+   2. Check balance between the treatment and control groups using baseline household variables
+   3. Regress (with OLS) the household income and log household income on the treatment dummy, including 
+        pair fixed effects, and standard errors clustered at the appropriate level 
+   4. Re-run the previous regression including a set of household-level controls and export and save a regression table 
+       suitable for publication from these results
+   5. Create a bar chart suitable for publication that summarizes the average borrowed amount for each income quartile,
       by treatment group.
       
 ## Description of Folders
